@@ -1,6 +1,8 @@
 from curl_cffi import requests
 from bs4 import BeautifulSoup as bs
 
+#source olx_eletronicos_pipeline/.venv/bin/activate
+
 sessao = requests.Session(impersonate="chrome")
 
 header = {
@@ -18,7 +20,35 @@ sessao.headers.update(header)
 url = "https://pe.olx.com.br/grande-recife/celulares/celular-iphone-14-plus-128gb-em-perfeito-estado-87-1508820428?lis=listing_3060"
 requisicao = sessao.get(url)
 
-print(requisicao)  
-
 site = bs(requisicao.text, "html.parser")
-print(site.prettify())
+
+preco = site.find_all("span")
+valor_preco = preco[63].text.strip() 
+
+marca = site.find_all("span")
+valor_marca = marca[46].text.strip()
+
+modelo = site.find_all("span")
+valor_modelo = modelo[48].text.strip()
+
+armazenamento = site.find_all("span")
+valor_armazenamento = armazenamento[52].text.strip()
+
+condicao = site.find_all("span")
+valor_condicao = condicao[50].text.strip()
+
+cor = site.find_all("span")
+valor_cor = cor[54].text.strip()
+
+saude_bateria = site.find_all("span")
+bateria_valor = saude_bateria[56].text.strip()
+
+localizacao = site.find_all("span")
+valor_localizacao = localizacao[59].text.strip()
+
+categoria = site.find_all("a")
+valor_categoria = categoria[15].text.strip()
+
+discricao = site.find_all("span")
+valor_discricao =  discricao[42].text.strip()
+

@@ -6,6 +6,9 @@ pandas==3.0.3
 duckdb==1.5.0
 pyarrow==24.0.0
 curl_cffi==0.15.0
+wget
+curl_cffi
+os
 
 # Opcional: só se quiser testar PySpark/Delta Lake localmente, fora do Databricks
 # (no Databricks Free Edition o PySpark já vem pronto no notebook, não precisa instalar)
