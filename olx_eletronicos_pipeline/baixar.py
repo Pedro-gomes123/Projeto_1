@@ -1,5 +1,6 @@
 import gzip
 from curl_cffi import requests
+from bs4 import BeautifulSoup as bs
 import os 
 
 
@@ -7,143 +8,68 @@ sessao = requests.Session(impersonate="chrome")
 pasta = 'xml'
 
 
-def baixar_Apple(sessao, pasta):
+def baixar_arquivo(sessao, pasta):
 
-    link = 'https://www.olx.com.br/celulares/apple/estado-pe'
+    links = ['https://www.olx.com.br/celulares/apple/estado-pe', 'https://www.olx.com.br/celulares/asus/estado-pe', 'https://www.olx.com.br/celulares/huawei/estado-pe', 'https://www.olx.com.br/celulares/infinix/estado_pe', 'https://www.olx.com.br/celulares/lenovo/estado-pe', 'https://www.olx.com.br/celulares/lg/estado-pe', 'https://www.olx.com.br/celulares/motorola/estado-pe', 'https://www.olx.com.br/celulares/samsung/estado-pe',  'https://www.olx.com.br/celulares/xiaomi/estado-pe']
+    tam = len(links)
+    marcas = [link.split('/')[4] + ".xml" for link in links]
+    for i in range(0, tam):
 
-    resposta = sessao.get(link)
+        link = links[i]
 
-    arquivo = 'Apple.xml'
-    caminho = os.path.join(pasta, arquivo)
+        resposta = sessao.get(link)
+
+        arquivo = marcas[i]
+        caminho = os.path.join(pasta, arquivo)
 
 
-    if resposta.status_code == 200:
-        with open(caminho, "wb") as f:
-            f.write(resposta.content)
-        print("Arquivo extraído e salvo com sucesso")
-    else:
-        print("Erro ao tentar baixar o arquivo")
+        if resposta.status_code == 200:
+            with open(caminho, "wb") as f:
+                f.write(resposta.content)
+            print("Arquivo extraído e salvo com sucesso")
+        else:
+            print("Erro ao tentar baixar o arquivo")
 
+
+def lista_anuncios():
+
+    i = 0
+    lista_link = []
+
+    caminho = os.path.dirname(os.path.abspath(__file__))
+    caminho_xml = os.path.join(caminho,'xml')
+
+    lista_arquivo = os.listdir(caminho_xml)
+    tam_lista = len(lista_arquivo)
     
-def baixar_asus(sessao, pasta):
+
+    for i in range(0, tam_lista):
+        print("extraindo a lista de anuncios do arquivo:", lista_arquivo[i])
+
+        nome_arq = lista_arquivo[i]
+        arquivo = os.path.join(caminho_xml, nome_arq)
+
+        with open(arquivo) as f:
+            conteudo = f.read()
+
+        site = bs(conteudo, "html.parser")
+
+        lista_url = site.find_all('a', href=True)
+        for tag in lista_url:
+
+            link = tag['href']
+
+            lista_link.append(link)
     
-    link = 'https://www.olx.com.br/celulares/asus/estado-pe'
 
-    resposta = sessao.get(link)
-
-    
-    arquivo = 'Asus.xml'
-    caminho = os.path.join(pasta, arquivo)
-
-    if resposta.status_code == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-        print("Arquivo extraido e salvo com sucesso")
-    else:
-        print("Erro ao tentar baixar o arquivo")
-
-def baixar_huawei(sessao, pasta):
-    
-    link = 'https://www.olx.com.br/celulares/huawei/estado-pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'huawei'
-    caminho = os.path.join(pasta,arquivo)
-
-    if resposta.status_code == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-        print("Arquivo extraido com sucesso")
-    else:
-        print("Erro ao tentar baixar o arquivo")
-
-def baixar_infinix(sessao, pasta):
-
-    link = 'https://www.olx.com.br/celulares/infinix/estado_pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'infinix'
-    caminho = os.path.join(pasta, arquivo)
-
-    if resposta.status_code == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-        print("Arquivo extraido com sucesso")
-    else:
-        print("Erro ao tentar baixar o arquivo")
-
-def baixar_lenovo(sessao, pasta):
-
-    link = 'https://www.olx.com.br/celulares/lenovo/estado-pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'lenovo'
-    caminho = os.path.join(pasta, arquivo)
-
-    if resposta.status_code() == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-    else:
-        print("Erro ao tentar baixar o arquivo")
+    return lista_link
 
 
-def baixar_lg(sessao, pasta):
-    
-    link = 'https://www.olx.com.br/celulares/lg/estado-pe'
 
-    resposta = sessao.get(link)
-    arquivo = 'lg'
-    caminho = os.path.join(pasta, arquivo)
+        
+baixar_arquivo(sessao, pasta)
 
-    if resposta.status_code() == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-    else:
-        print("Erro ao tentar baixar o arquivo")
-
-def baixar_motorola(sessao, pasta):
-
-    link = 'https://www.olx.com.br/celulares/motorola/estado-pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'motorola'
-    caminho = os.path.join(pasta, arquivo)
-    
-    if resposta.status_code() == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-    else:
-        print("Erro ao tentar baixar o arquivo")
-
-def baixar_samsung(sessao, pasta):
-
-    link = 'https://www.olx.com.br/celulares/samsung/estado-pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'samsung'
-    caminho = os.path.join(pasta, arquivo)
-
-    if resposta.status_code() == 200:
-        with open(caminho, 'wb') as f:
-            f.write(resposta.content)
-    else:
-        print("Erro ao baixar o arquivo")
-
-def baixar_xiaomi(sessao, pasta):
-
-    link = 'https://www.olx.com.br/celulares/xiaomi/estado-pe'
-
-    resposta = sessao.get(link)
-    arquivo = 'xiaomi'
-    caminho = os.path.join(pasta, arquivo)
-
-    if resposta.status_code() == 200:
-        with open(caminho,'wb') as f:
-            f.write(resposta.contnt)
-    else:
-        print("Erro ao baixar o arquivo")       
-
-
+lista_anuncios()
 
 
 
